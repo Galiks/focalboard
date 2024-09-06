@@ -145,9 +145,9 @@ func (b *Block) IsValid() error {
 		return ErrBlockEmptyBoardID
 	}
 
-	if utf8.RuneCountInString(b.Title) > BlockTitleMaxRunes {
-		return ErrBlockTitleSizeLimitExceeded
-	}
+	// if utf8.RuneCountInString(b.Title) > BlockTitleMaxRunes {
+	// 	return ErrBlockTitleSizeLimitExceeded
+	// }
 
 	fieldsJSON, err := json.Marshal(b.Fields)
 	if err != nil {
