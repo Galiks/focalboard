@@ -20,14 +20,14 @@ import (
 )
 
 const (
-	archiveVersion  = 2
-	legacyFileBegin = "{\"version\":1"
-	// importMaxFileSize = 1024 * 1024 * 70
+	archiveVersion    = 2
+	legacyFileBegin   = "{\"version\":1"
+	importMaxFileSize = 1024 * 1024 * 70
 )
 
 var (
-	errBlockIsNotABoard = errors.New("block is not a board")
-	// errSizeLimitExceeded = errors.New("size limit exceeded")
+	errBlockIsNotABoard  = errors.New("block is not a board")
+	errSizeLimitExceeded = errors.New("size limit exceeded")
 )
 
 // ImportArchive imports an archive containing zero or more boards, plus all
@@ -155,7 +155,8 @@ func (a *App) ImportBoardJSONL(r io.Reader, opt model.ImportArchiveOptions) (*mo
 		Blocks: make([]*model.Block, 0, 10),
 		Boards: make([]*model.Board, 0, 10),
 	}
-	scanner := bufio.NewScanner(r)
+	lineReader := &io.LimitedReader{R: r, N: importMaxFileSize + 1}
+	scanner := bufio.NewScanner(lineReader)
 
 	userID := opt.ModifiedBy
 	if userID == model.SingleUser {
@@ -168,6 +169,10 @@ func (a *App) ImportBoardJSONL(r io.Reader, opt model.ImportArchiveOptions) (*mo
 	lineNum := 1
 	firstLine := true
 	for scanner.Scan() {
+		if lineReader.N <= 0 {
+			return nil, fmt.Errorf("error parsing archive line %d: %w", lineNum, errSizeLimitExceeded)
+		}
+
 		line := bytes.TrimSpace(scanner.Bytes())
 		if len(line) != 0 {
 			var skip bool
