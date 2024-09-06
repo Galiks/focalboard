@@ -156,6 +156,9 @@ func (a *App) ImportBoardJSONL(r io.Reader, opt model.ImportArchiveOptions) (*mo
 		Boards: make([]*model.Board, 0, 10),
 	}
 	scanner := bufio.NewScanner(r)
+	maxBufferSize := 10 * 1024 * 1024
+	buf := make([]byte, maxBufferSize)
+	scanner.Buffer(buf, maxBufferSize)
 
 	userID := opt.ModifiedBy
 	if userID == model.SingleUser {
