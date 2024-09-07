@@ -57,9 +57,11 @@ async function main() {
     // Read input
     const input = await csv().fromFile(inputFile)
 
-    console.log(`Read ${input.length} rows.`)
+    // console.log(`Read ${input.length} rows.`)
 
-    console.log(input)
+    console.log("INPUT 1:")
+    
+    console.log(input[0])
 
     const basename = path.basename(inputFile, '.csv')
     const components = basename.split(' ')
@@ -89,21 +91,28 @@ function getCsvFilePath(inputFolder: string): string | undefined {
 }
 
 function getMarkdown(cardTitle: string): string | undefined {
+    if (cardTitle == "") {
+        return undefined
+    }
     if (!fs.existsSync(markdownFolder)){ return undefined}
     const files = fs.readdirSync(markdownFolder)
     const file = files.find((o) => {
         const basename = path.basename(o)
         const components = basename.split(' ')
-        const fileCardTitle = components.slice(0, components.length-1).join(' ')
-        if (fileCardTitle === cardTitle) {
+        const fileCardTitle = components.slice(0, components.length-1).join(' ')        
+        if (fileCardTitle === cardTitle) {          
             return o
         }
     })
 
     if (file) {
-        const filePath = path.join(markdownFolder, file)
-        const markdown = fs.readFileSync(filePath, 'utf-8')
-
+        let filePath = path.join(markdownFolder, file)
+        if (filePath.substring(filePath.length-3) != ".md") {
+            filePath = filePath+".md"
+        }
+        console.log("FILEPATH: ", filePath)
+        const markdown = fs.readFileSync( filePath, 'utf-8')
+        console.log("!!!!!!!!!!!MARKDOWN!!!!!!!!!!!: ", markdown)
         // TODO: Remove header from markdown, which repets card title and properties
         return markdown
     }
@@ -129,6 +138,10 @@ function convert(input: any[], title: string): [Board[], Block[]] {
 
     // Each column is a card property
     const columns = getColumns(input)
+    console.log("COLUMNS 1:")
+    console.log(columns[1])
+    
+    
     columns.forEach(column => {
         const cardProperty: IPropertyTemplate = {
             id: Utils.createGuid(),
@@ -153,17 +166,24 @@ function convert(input: any[], title: string): [Board[], Block[]] {
 
     // Cards
     input.forEach(row => {
+        const markdownTitleRow = row["Name"]
+        console.log("row NAME: ", row["Name"])
+        
         const keys = Object.keys(row)
+        console.log("KEYS:")
+        
         console.log(keys)
         if (keys.length < 1) {
             console.error(`Expected at least one column`)
             return blocks
         }
-
+        // console.log("TRY FIND TITLE (KEYS): ",keys)
         const titleKey = keys[0]
+        // console.log("TRY FIND TITLE (ROW): ",row)
+        
         const title = row[titleKey]
 
-        console.log(`Card: ${title}`)
+        // console.log(`Card: ${title}`)
 
         const outCard = createCard()
         outCard.title = title
@@ -197,7 +217,7 @@ function convert(input: any[], title: string): [Board[], Block[]] {
         blocks.push(outCard)
 
         // Card notes from markdown
-        const markdown = getMarkdown(title)
+        const markdown = getMarkdown(markdownTitleRow)
         if (markdown) {
             console.log(`Markdown: ${markdown.length} bytes`)
             const text = createTextBlock()
