@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch TypeScript",
+            "runtimeExecutable": "npx",
+            "args": [
+                "ts-node",
+                "${workspaceFolder}/import/notion/importNotion.ts",
+                "-i ~/home/pavel/Документы/33",
+                "-o 33.boardarchive"
+            ],
+            "skipFiles": ["<node_internals>/**"],
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+        },
+        {
             "name": "Go: Launch Server",
             "type": "go",
             "request": "launch",
@@ -22,9 +36,9 @@
             "program": "${workspaceFolder}/server/main",
             "cwd": "${workspaceFolder}",
             "args": ["-single-user"],
-			"env": {
-				"FOCALBOARD_SINGLE_USER_TOKEN": "testtest"
-			}
+            "env": {
+                "FOCALBOARD_SINGLE_USER_TOKEN": "testtest"
+            }
         },
         {
             "name": "Go: Launch Windows App",
@@ -32,7 +46,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/win",
-            "cwd": "${workspaceFolder}/win/temp",
+            "cwd": "${workspaceFolder}/win/temp"
         },
         {
             "name": "Go: Launch Linux App",
@@ -40,7 +54,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/linux",
-            "cwd": "${workspaceFolder}/linux/dist/focalboard-app",
+            "cwd": "${workspaceFolder}/linux/dist/focalboard-app"
         },
         {
             "name": "Go: Test Current File",
@@ -59,9 +73,7 @@
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}",
             "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "type": "pwa-node"
         },
         {
@@ -70,9 +82,7 @@
             "name": "Jest: run all tests",
             "program": "${workspaceRoot}/webapp/node_modules/jest/bin/jest.js",
             "cwd": "${workspaceRoot}/webapp",
-            "args": [
-                "--verbose",
-            ],
+            "args": ["--verbose"],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
@@ -82,10 +92,7 @@
             "name": "Jest: run current file",
             "program": "${workspaceRoot}/webapp/node_modules/jest/bin/jest.js",
             "cwd": "${workspaceRoot}/webapp",
-            "args": [
-                "${fileBasename}",
-                "--verbose",
-                ],
+            "args": ["${fileBasename}", "--verbose"],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
